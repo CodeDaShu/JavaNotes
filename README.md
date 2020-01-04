@@ -77,4 +77,7 @@
 
 如果大家想实时关注我的文章，可以关注我的公众号「会点代码的大叔」。
 
-![会点代码的大叔](https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg)
+<div align="center">
+    <br>
+    <img width="350px" src="https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg"></img>
+</div>
