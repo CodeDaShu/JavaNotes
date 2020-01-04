@@ -67,9 +67,11 @@
 
 如果您想私下和我交流，也可以添加我的微信。
 
+![个人微信](https://s2.ax1x.com/2020/01/04/l0mRxA.jpg)
+
 
 ## 公众号
 
 如果大家想实时关注我的文章，可以关注我的公众号「会点代码的大叔」。
 
-![会点代码的大叔](https://github.com/CodeDaShu/JavaNotes/blob/master/img/sign.jpg)
+![会点代码的大叔](https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg)
