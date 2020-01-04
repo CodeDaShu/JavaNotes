@@ -67,7 +67,10 @@
 
 如果您想私下和我交流，也可以添加我的微信。
 
-![个人微信](https://s2.ax1x.com/2020/01/04/l0mRxA.jpg)
+<div align="center">
+    <br>
+    <img width="150px" src="https://s2.ax1x.com/2020/01/04/l0mVUS.md.jpg"></img>
+</div>
 
 
 ## 公众号
