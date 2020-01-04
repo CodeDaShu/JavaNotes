@@ -79,5 +79,5 @@
 
 <div align="center">
     <br>
-    <img width="350px" src="https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg"></img>
+    <img width="750px" src="https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg"></img>
 </div>
