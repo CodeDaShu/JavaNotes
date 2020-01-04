@@ -69,7 +69,7 @@
 
 <div align="center">
     <br>
-    <img width="150px" src="https://s2.ax1x.com/2020/01/04/l0mVUS.md.jpg"></img>
+    <img width="240px" src="https://s2.ax1x.com/2020/01/04/l0mVUS.md.jpg"></img>
 </div>
 
 
