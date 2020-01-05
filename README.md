@@ -28,7 +28,7 @@
 
 - [Java 基础](/notes/java/basics/javabasics.md)
 - Java 集合
-- Java 虚拟机
+- [Java 虚拟机](/notes/java/jvm/jvm.md)
 - Java 多线程和并发
 - Java I/O
 
