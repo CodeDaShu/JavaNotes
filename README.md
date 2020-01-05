@@ -65,7 +65,7 @@
 - 程序人生
     - [工作三年还是只会增删改查，Java 程序员如何进阶？](/notes/chat/codelife/work3years.md)
 - 提升效率少加班
-    - [如何让你的代码跑得更快？尽量让你的代码少干点儿活儿](/notes/chat/efficiency/如何让你的代码跑得更快.md)
+    - [如何让你的代码跑得更快？尽量让你的代码少干点儿活儿](/notes/chat/efficiency/coderunfast.md)
 
 
 ## 关于转载
