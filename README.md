@@ -34,8 +34,7 @@
 
 ## 数据库及缓存
 
-- MySQL
-- SQL 优化
+- [MySQL](/notes/database/MySQL.md)
 - MongoDB
 - [Redis](/notes/database/Redis.md)
 
