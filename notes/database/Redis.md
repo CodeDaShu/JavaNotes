@@ -1,5 +1,5 @@
 <!-- GFM-TOC -->
-* [一、什么是 Redis](#什么是 Redis)
+* [一、概述](#概述)
 * [二、数据类型](#数据类型)
     * [STRING](#string)
     * [HASH](#hash)
@@ -12,10 +12,10 @@
 * [五、使用场景](#五使用场景)
 <!-- GFM-TOC -->
 
-# 一、什么是 Redis
+## 一、概述
 
 
-# 二、数据类型
+## 二、数据类型
 
 Redis 的数据架构，可以参考下图：
 
@@ -39,7 +39,7 @@ typedef struct redisObject {
 *   refcount：对象引用计数；
 *   ptr：指向实际实现者的地址；
 
-## String
+### String
 
 Redis 中的 String 不仅仅表示 字符串，还可以表示 整型、浮点型。
 
@@ -53,11 +53,11 @@ embstr 的优势在于创建时少分配一次空间（RedisObject 和 sds 是�
 
 修改 embstr 对象的时候，Redis 会将其转换成 raw 格式再进行修改，所以 embstr 对象修改之后的对象，一定是 raw 的。
 
-![SDS](https://upload-images.jianshu.io/upload_images/904242-586bdeb560fda739?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SDS](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/Redis-String-data-structure.jpg)
 
 应用场景：常规计数都可以使用，可用作缓存、计数、限速等等，比如商品剩余数量，字典表信息，长度不能超过 512MB。
 
-## Hash
+### Hash
 
 Hash 对象的底层实现可以是 **ziplist 或者 hashtable**。
 
@@ -67,7 +67,7 @@ Hash 对象的底层实现可以是 **ziplist 或者 hashtable**。
 
 **应用场景：**Hash 适用于存储结构化的对象，可以直接修改这个对象中的某个字段的值；比如用户信息。
 
-## List
+### List
 
 List 对象的编码可以是 **ziplist 或者 linkedlist**，从名字上也能看出来两种结构都是啥。
 
@@ -77,7 +77,7 @@ List 对象的编码可以是 **ziplist 或者 linkedlist**，从名字上也能
 
 **应用场景：**通常网站上的消息列表，可以使用 List 来进行存储；另外 lrange 命令，从某个元素开始，读取多少个元素，可以看做是分页查询，比如很多网站上那种不断下拉，不断分页的效果。
 
-## Set
+### Set
 
 Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是 **intset 或者 hashtable **。
 
@@ -87,7 +87,7 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 **应用场景：**如果要存储一个列表，同时又需要做数据排重的时候，可以使用 set ；另外，Redis 还为 Set 提供了求交集、并集、差集等操作，比如微博上面的【共同关注】这个功能，就可以用 Set 实现。
 
-## ZSet / Sorted Set
+### ZSet
 
 和 Set 相比，ZSet 增加了一个参数 score，集合中的元素按照 score 进行有序排列。
 
@@ -100,9 +100,9 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 **应用场景：**有序 + 排重的场景，比如经常玩游戏的同学，应该不会陌生各种排行榜，就可以使用 ZSet 来实现。
 
 
-# 三、数据结构
+## 三、数据结构
 
-## 跳跃表
+### 跳跃表
 
 先让我们看一个问题：如果要存一组有序的 int 型数据集合，我们可以如何实现？
 
@@ -114,30 +114,30 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 那么有没有什么数据结构可以让查询、新增、删除操作都变得很快呢？这就是我们今天要介绍的跳跃表了，让我们看几张图，很容易理解。
 
-### 跳跃表
-![跳跃表-底层数据链路](https://upload-images.jianshu.io/upload_images/904242-be9f29b1c2f35e08.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+#### 跳跃表概述
+![跳跃表-底层数据链路](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-1.jpg)
 
 如上图，一个有序的链表，如果要找值为 50 的节点，需要从第一个节点开始遍历，查询最后才能找到值为 50 的节点。
 
 我们给这个链表加一层索引，如图：
 
-![跳跃表-一级索引](https://upload-images.jianshu.io/upload_images/904242-959bb0bc97bfed77.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![跳跃表-一级索引](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-2.jpg)
 
 我们按照一级索引来查询（橙色查询路线），可以发现我们至少可以少遍历一半的节点。
 
 还觉得有些慢？，那么再增加一层，再加一层，如图：
 
-![跳跃表-二级索引](https://upload-images.jianshu.io/upload_images/904242-c76bb2902144a199.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![跳跃表-二级索引](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-3.jpg)
 
-![跳跃表-三级索引](https://upload-images.jianshu.io/upload_images/904242-095cd64e8ac180b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![跳跃表-三级索引](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-4.jpg)
 
 是不是更快地找到我们需要的节点了，当然这里的节点数量不够多，如果节点数量非常多，查找效率提升会更加明显。
 
 如果需要找中间的某个节点，比如寻找 42 ，过程大概是这样的：
 
-![跳跃表-三级索引-寻找42](https://upload-images.jianshu.io/upload_images/904242-be0e028f3475f488.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![跳跃表-三级索引-寻找42](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-5.jpg)
 
-### 插入节点
+#### 插入节点
 
 看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引；
 
@@ -151,9 +151,9 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 这里要注意一点，插入 2 级索引的时候，同时也需要插入 1 级索引；也就是插入 n 级索引的时候，同时也要插入 1~( n-1 ) 级索引。
 
-![跳跃表-三级索引-插入节点.jpg](https://upload-images.jianshu.io/upload_images/904242-6541bb7989a6a263.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![跳跃表-三级索引-插入节点.jpg](https://github.com/CodeDaShu/JavaNotes/blob/master/img/dataStructure/SkipList-6.jpg)
 
-### 删除节点
+#### 删除节点
 
 跳跃表删除节点就更简单了，删除数据节点，并删除每一层的索引节点（如果有的话）。
 
@@ -175,12 +175,12 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 8.  Google 的 LevelDB 、Facebook 的 RocksDB ，它们都是使用了跳跃表这种数据结构。
 
-# 四、Guava、Memcached 和 Redis
+## 四、Guava、Memcached 和 Redis
 
 ### 为什么要使用 Redis
 软件架构中引入 Redis ，是因为它“又快又强”。
 
-#### 1. 快，是指性能高
+1. 快，是指性能高
 
 计算机硬件的速度由低到高：硬盘-网络-内存-CPU；
 
@@ -188,7 +188,7 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 所以我们经常把 Redis 当做缓存：第一次从数据库中读取数据，并放入 Redis ，后面直接访问 Redis 就可以了。
 
-#### 2. 强，是指高并发场景下的稳定性（高可用）
+2. 强，是指高并发场景下的稳定性（高可用）
 
 在高并发的场景下，Redis 能够承受的访问极限，是远远大于数据库的，所以我们可以考虑把需要高并发读的数据放到 Redis 中；
 
@@ -206,13 +206,13 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 
 缓存分为本地缓存和分布式缓存：
 
-#### 1. 本地缓存
+1. 本地缓存
 
 比如 Guava、Ehcache，甚至把缓存保存到 Map 中，这些都是本地缓存；
 
 本地缓存的特点是轻量、实现简单，生命周期随着 JVM 的销毁而结束；但是如果程序存在多个实例（程序部署多套），每个实例中的缓存不具有一致性。
 
-#### 2. 分布式缓存
+2. 分布式缓存
 
 Redis 被称作分布式缓存，如果程序存在多个实例，各个实例可以共用 Redis 中的缓存数据，但同时因为引入了 Redis ，那么需要保证 Redis 的高可用，架构上更为复杂。
 
@@ -228,7 +228,7 @@ Memcached 也经常被用作缓存，也是分布式缓存的一种，那么它�
 
 *   Redis 使用单线程的多路 IO 复用模型（Redis 在最新的 6.0 版本中开始支持多线程）；Memcached 使用的是多非阻塞IO复用的网络模型。
 
-![Redis 和 Memcache  的区别](https://upload-images.jianshu.io/upload_images/904242-b383fe0bf271313c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Redis 和 Memcache  的区别](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/Redis-Memcached-2.jpg)
 
 最后再强调一点，**是否要引入 Redis？使用本地缓存还是分布式缓存？都需从项目的实际情况出发**；Redis 丰富的数据类型和对持久化的支持，会更加适合我们的项目。
 
