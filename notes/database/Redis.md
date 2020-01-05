@@ -10,6 +10,9 @@
     * [跳跃表](#跳跃表)
 * [四、Guava、Memcached 和 Redis](#四Guava-Memcached-Redis)
 * [五、使用场景](#五使用场景)
+* [六、缓存穿透](#六缓存穿透)
+* [七、缓存雪崩](#七缓存雪崩)
+* [八、缓存击穿](#八缓存击穿)
 <!-- GFM-TOC -->
 
 # 一、概述
@@ -233,3 +236,87 @@ Memcached 也经常被用作缓存，也是分布式缓存的一种，那么它�
 最后再强调一点，**是否要引入 Redis？使用本地缓存还是分布式缓存？都需从项目的实际情况出发**；Redis 丰富的数据类型和对持久化的支持，会更加适合我们的项目。
 
 # 五、使用场景
+
+# 六、缓存穿透
+
+Redis 大部分的使用场景，都是根据 key ，先在 Redis 中查询，如果查询不到的话，再查询数据库。
+
+当有大量的请求，key 值根本不在 Redis 中，那么查询就会落到数据库上，这些请求就仿佛“穿透”过了 Redis 落在了数据库上，最后会导致数据库不堪重负直至崩溃。
+
+![缓存穿透](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/Cache-penetration.jpg)
+
+让我们看看缓存穿透的应对策略：
+
+## 1. 将无效 key 保存到 Redis 中
+
+如果 Redis 中查询不到，并且查询数据库也没有结果，那么就将这个 key 写入到 Redis 中，设置 value = 空，这样如果这个 key 值被重复访问，也不会查询数据库。
+
+![将无效 key 保存到 Redis 中](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/Cache-penetration-2.jpg)
+
+但是如果数据库几分钟后，存入了一条真实的数据，那么就会发生数据库和缓存数据不一致的情况；
+
+这种情况，要么主动更新 Redis 中这条 key-空 的数据，要么在设置缓存的时候，同时设置缓存的额过期时间，这样当时间一过，缓存数据就可以刷入到 Redis 中了。
+
+如果每次查询的 key 值都不相同，比如收到恶意攻击，每次访问都是无效且不相同的 key 值，那么这个办法就会失效。
+
+## 2. 布隆过滤器
+
+布隆过滤器（Bloom Filter）的原理解释起来很复杂，用白话概括一下它的特点：它说某个 key 不存在，那么就一定不存在，它说某个 key 存在，那么很大可能是存在（存在一定的误判率）。
+
+使用布隆过滤器，挡回无效请求，流程大概是这样的：
+
+![布隆过滤器](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/bloom.jpg)
+
+对布隆过滤器感兴趣的同学，可以试一试 Google 出品的 Guava 工具库，其中就有开箱即用的布隆过滤器：BloomFilter；
+
+```
+public class BloomFilterTest {
+	public static void main(String[] args){
+		int size = 1000000;
+		//布隆过滤器
+		BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size, 0.001);
+
+		for (int i = 0; i < size; i++) {
+            bloomFilter.put(i);
+        }
+
+	List<Integer> list = new ArrayList<Integer>(1000);
+        for (int i = size + 1; i < size + 10000; i++) {
+            if (bloomFilter.mightContain(i)) {
+                list.add(i);
+            }
+        }
+        System.out.println("误判数量：" + list.size());
+	}
+}
+```
+
+另外，Redis 在 4.0 之后有了插件功能（Module），可以使用外部的扩展功能，可以使用 RedisBloom 作为 Redis 布隆过滤器插件。
+
+
+# 七、缓存雪崩
+
+通常我们在使用 Redis 的时候，都会为缓存设置过期时间，但是如果在某个时间点，有大量缓存失效，那么下一个时间点就会有大量请求访问到数据库，这种情况下，数据库可能因为访问量多大导致“崩溃”，这就是缓存雪崩。
+
+让我们看看缓存雪崩的解决方案：
+
+## 1. 不设置缓存过期时间
+
+最暴力的解决办法，缓存不设置自动过期时间，只要缓存不崩，数据库就不会崩。
+
+## 2. 设置随机过期时间
+
+另外一个办法，就是让缓存过期时间不那么一致，比如一批缓存数据24小时后过期，那么就在这个基础上，让每条缓存的过期时间前后随机 1-6000 秒（1-10分钟）。
+
+## 3. 使用互斥锁
+
+在缓存失效后，通过互斥锁或者队列，控制读数据库和写缓存的线程数量；不过这样会导致系统的吞吐量下降。
+
+## 4. 双缓存
+
+设置一级缓存和二级缓存，一级缓存过期时间短，二级缓存过期时间长或者不过期，一级缓存失效后访问二级缓存，同时刷新一级缓存。
+
+最后在强调一遍，任何架构、组件、框架的引入，都会带来新的问题，我们在使用的时候一定要有相应的评估和解决方案。
+
+
+# 八、缓存击穿
