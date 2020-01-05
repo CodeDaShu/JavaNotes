@@ -63,6 +63,7 @@
 ## 闲聊
 
 - 程序人生
+    - [工作三年还是只会增删改查，Java 程序员如何进阶？](/notes/chat/codelife/work3years.md)
 
 
 ## 关于转载
