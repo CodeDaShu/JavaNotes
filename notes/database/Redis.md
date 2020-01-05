@@ -19,7 +19,7 @@
 
 Redis 的数据架构，可以参考下图：
 
-![Redis 的数据架构](https://upload-images.jianshu.io/upload_images/904242-f525b52ec3dd4766?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Redis 的数据架构](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/Redis-structure.jpg)
 
 Redis中的所有 value 都是以 Object 的形式存在的，其通用结构如下： 
 
