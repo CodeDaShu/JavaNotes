@@ -77,12 +77,13 @@
 
 <div align="center">
     <br>
-    <img width="240px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/wechat.jpg"></img>
+    <img width="240px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/wechat.jpg">
 </div>
 
 ## 关于投稿
 
 本仓库于 2020-1-4 创建，还在不断完善中...
+
 如果您认为有比较重要的知识点，可以通知我增加，或者您对哪个技术类问题有疑惑，我也可以整理为您解答；如果您有觉得不错的文章，也可以投稿。
 
 
@@ -92,5 +93,5 @@
 
 <div align="center">
     <br>
-    <img width="750px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/sign.jpg"></img>
+    <img width="750px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/sign.jpg">
 </div>
