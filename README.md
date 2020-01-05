@@ -29,7 +29,7 @@
 - MySQL
 - SQL 优化
 - MongoDB
-- Redis
+- [Redis](/notes/database/Redis.md)
 
 ## 网络
 
@@ -69,7 +69,7 @@
 
 <div align="center">
     <br>
-    <img width="240px" src="https://s2.ax1x.com/2020/01/04/l0mVUS.md.jpg"></img>
+    <img width="240px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/wechat.jpg"></img>
 </div>
 
 
@@ -79,5 +79,5 @@
 
 <div align="center">
     <br>
-    <img width="750px" src="https://s2.ax1x.com/2020/01/04/l0mmCQ.jpg"></img>
+    <img width="750px" src="https://github.com/CodeDaShu/JavaNotes/blob/master/img/sign.jpg"></img>
 </div>
