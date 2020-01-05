@@ -25,23 +25,23 @@ String 被声明为 final，是不可变的，它也不可被继承。
 
 在 Java 8 中，String 是使用 char 数组实现的。
 ```
-	public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
-	   /** The value is used for character storage. */
-	   private final char value[];
+public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
+   /** The value is used for character storage. */
+   private final char value[];
 
-	   /** Cache the hash code for the string */
-	   private int hash; // Default to 0
-	}
+   /** Cache the hash code for the string */
+   private int hash; // Default to 0
+}
 ```
 到了 Java 9 ，String 类的实现改用 byte 数组实现，同时使用 coder 来标识使用了哪种编码。
 ```
-	public final class String
-	   implements java.io.Serializable, Comparable<String>, CharSequence {
-            /** The value is used for 	character storage. */
-            private final byte[] value;
-	    /** The identifier of the encoding used to encode the bytes in {@code value}. */
-            private final byte coder;
-	}
+public final class String
+   implements java.io.Serializable, Comparable<String>, CharSequence {
+          /** The value is used for 	character storage. */
+          private final byte[] value;
+    /** The identifier of the encoding used to encode the bytes in {@code value}. */
+          private final byte coder;
+}
 ```
 我们可以看到，value 数组被声明为 final，并且 String 内部也没有改变 value 数组的方法，因此 String 是不可变的。
 
