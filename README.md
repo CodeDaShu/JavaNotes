@@ -4,6 +4,12 @@
 
 欢迎关注我的公众号「会点代码的大叔」，获取最新文章。
 
+<p align="center">
+  <a href="https://github.com/CodeDaShu/JavaNotes"><img src="https://img.shields.io/badge/阅读-read-red.svg" alt="阅读"></a>
+  <a href="#联系我"><img src="https://img.shields.io/badge/chat-微信-blue.svg" alt="关于转载"></a>
+  <a href="#公众号"><img src="https://img.shields.io/badge/chat-公众号-orange.svg" alt="公众号"></a>
+</p>
+
 ## 目录
 
 - [Java](#Java)
