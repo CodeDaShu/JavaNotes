@@ -29,8 +29,8 @@
 - [Java 基础](/notes/java/javabasics.md)
 - [Java 集合](/notes/java/collection.md)
 - [Java 虚拟机](/notes/java/jvm.md)
-- Java 多线程和并发
-- Java I/O
+- [Java 多线程和并发](/notes/java/thread.md)
+- [Java I/O](/notes/java/io.md)
 
 ## 数据库及缓存
 
@@ -72,7 +72,7 @@
 
 本仓库文章大部分文章都为我的原创，包括图片都是自己画的，画图使用工具：[ProcessOn](https://www.processon.com/)
 
-<span style=" color: rgb(249, 115, 83); ">**Attention：**</span> 图片直接放在本工程 /img 下，如果图片加载缓慢或失败，请自行查找解决办法（需要修改 Hosts 文件）。
+**Attention：** 图片直接放在本工程 /img 下，如果图片加载缓慢或失败，请自行查找解决办法（需要修改 Hosts 文件）。
 
 如果您需要转载本仓库的文章到博客或网站，记得注明原文地址；
 
