@@ -5,14 +5,14 @@
     * [HASH](#hash)
     * [LIST](#list)
     * [SET](#set)
-    * [ZSet / Sorted Set](#ZSet / Sorted Set)
+    * [ZSet](#ZSet)
 * [三、数据结构](#三数据结构)
     * [跳跃表](#跳跃表)
 * [四、Guava、Memcached 和 Redis](#四Guava-Memcached-Redis)
 * [五、使用场景](#五使用场景)
 <!-- GFM-TOC -->
 
-# 一、概述
+# 一、什么是 Redis
 
 
 # 二、数据类型
