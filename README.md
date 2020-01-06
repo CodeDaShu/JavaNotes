@@ -52,7 +52,7 @@
 ## 架构设计
 
 - 分布式 & 微服务
-- [一致性算法](/notes/distributed/muniformity.md)
+- [一致性算法](/notes/distributed/uniformity.md)
 
 ## 常用框架
 
