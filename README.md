@@ -52,6 +52,8 @@
 ## 架构设计
 
 - 分布式 & 微服务
+  - [分布式架构下的 Session 共享方案](/notes/distributed/sessionShare.md)
+  - [高并发场景下的限流算法](/notes/distributed/currentLimiting.md)
 - [一致性算法](/notes/distributed/uniformity.md)
 
 ## 常用框架
