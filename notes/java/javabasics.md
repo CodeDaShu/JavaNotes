@@ -85,8 +85,8 @@ Integer i = 1 ;
 - new Integer(1) ：会新建一个对象；
 - Integer.valueOf(1) ：使用对象池中的对象，如果多次调用，会取得同一个对象的引用。
 
-### 对象池机制
-为了提高性能，Java 在 1.5 以后针对八种基本类型的包装类，提供了和 String 类一样的对象池机制；让我们看一下 Integer.valueOf(int i) 的源码，就很容易理解了：
+### 缓存池的概念
+为了提高性能，Java 在 1.5 以后针对八种基本类型的包装类，提供了和 String 类一样的缓存池机制；让我们看一下 Integer.valueOf(int i) 的源码，就很容易理解了：
 
 ```
 public final class Integer extends Number implements Comparable<Integer> {
@@ -98,9 +98,9 @@ public final class Integer extends Number implements Comparable<Integer> {
 }
 ```
 
-- Integer.valueOf() 中有个内部类 IntegerCache，类似于一个常量数组，也叫对象池，它维护了一个 Integer 数组 cache，长度为（128+127+1）=256，意味着 Integer 缓存池的大小默认为 -128 ~ 127 ；
+- Integer.valueOf() 中有个内部类 IntegerCache，类似于一个常量数组，也叫缓存池，它维护了一个 Integer 数组 cache，长度为（128+127+1）=256，意味着 Integer 缓存池的大小默认为 -128 ~ 127 ；
 - Integer类中还有一个静态代码块，默认创建了数值【-128-127】的 Integer 缓存数据；所以当 Integer.valueOf(1) 的时候，会直接在该在对象池找到该值的引用；
-- 在 jdk 1.8 中，在启动 JVM 的时候，可以通过配置来指定这个缓冲池的大小。
+- 在 jdk 1.8 中，在启动 JVM 的时候，可以通过配置来指定这个缓存池的大小。
 
 ### Integer i = 1 与 Integer.valueOf(1)
 ```
