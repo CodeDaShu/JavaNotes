@@ -73,9 +73,48 @@ ch ++ ;
 
 ## 缓存池机制
 
-文章-----------------
+关于 Java 字符串 String 有一道很基础的面试题，相信很多人都遇到过，就是 String s = "a" 和 String s = new String("a") 的区别是什么？相信大家都能回答上来。
+那么你知道这三者有什么区别么？
+```
+Integer i = new Integer(1) ;
+Integer i = Integer.valueOf(1) ;
+Integer i = 1 ;
+```
 
+### new Integer(1) 与 Integer.valueOf(1)
+- new Integer(1) ：会新建一个对象；
+- Integer.valueOf(1) ：使用对象池中的对象，如果多次调用，会取得同一个对象的引用。
 
+### 对象池机制
+为了提高性能，Java 在 1.5 以后针对八种基本类型的包装类，提供了和 String 类一样的对象池机制；让我们看一下 Integer.valueOf(int i) 的源码，就很容易理解了：
+
+```
+public final class Integer extends Number implements Comparable<Integer> {
+  public static Integer valueOf(int i) {
+        if (i >= IntegerCache.low && i <= IntegerCache.high)
+            return IntegerCache.cache[i + (-IntegerCache.low)];
+        return new Integer(i);
+    }
+}
+```
+
+- Integer.valueOf() 中有个内部类 IntegerCache，类似于一个常量数组，也叫对象池，它维护了一个 Integer 数组 cache，长度为（128+127+1）=256，意味着 Integer 缓存池的大小默认为 -128 ~ 127 ；
+- Integer类中还有一个静态代码块，默认创建了数值【-128-127】的 Integer 缓存数据；所以当 Integer.valueOf(1) 的时候，会直接在该在对象池找到该值的引用；
+- 在 jdk 1.8 中，在启动 JVM 的时候，可以通过配置来指定这个缓冲池的大小。
+
+### Integer i = 1 与 Integer.valueOf(1)
+```
+Integer i = 1 ;
+```
+
+等号左边是 Integer 类型，等号右边是 int 类型 ，这种写法叫做装箱（基本类型与其对应的包装类型之间的赋值使用自动装箱与拆箱完成），而装箱操作是通过 Integer.valueOf(1) 完成的，所以：
+
+Integer i = 1 等同于 Integer.valueOf(1)
+
+### 其他基本类型对应的缓存池
+- Boolean：true , false
+- Short, Int, Long：-128 ~ 127
+- Byte, Character : \u0000 到 \u007F，也就是 0 ~ 127
 
 # 二、String
 
