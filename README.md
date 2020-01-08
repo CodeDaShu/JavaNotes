@@ -70,6 +70,7 @@
     - [2019：三十五岁的程序员大叔，工作还在，头发还在](/notes/chat/codelife/2019summary.md)
 - 提升效率少加班
     - [如何让你的代码跑得更快？尽量让你的代码少干点儿活儿](/notes/chat/efficiency/coderunfast.md)
+    - [为什么越来越多的系统在做服务化？](/notes/chat/efficiency/systemService.md)
 
 
 ## 关于转载
