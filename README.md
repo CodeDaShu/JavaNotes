@@ -71,6 +71,7 @@
 - 提升效率少加班
     - [如何让你的代码跑得更快？尽量让你的代码少干点儿活儿](/notes/chat/efficiency/coderunfast.md)
     - [为什么越来越多的系统在做服务化？](/notes/chat/efficiency/systemService.md)
+    - [MySQL数据库中，数据量越来越大，有什么具体的优化方案么？](/notes/chat/efficiency/mysqlDataOptimization.md)
 
 
 ## 关于转载
