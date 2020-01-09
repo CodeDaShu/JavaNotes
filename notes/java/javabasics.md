@@ -170,26 +170,28 @@ public final class String
 
 ### 不可变的优势
 
-#### 1. 线程安全
+**1. 线程安全**
+
 因为 String 的不可变性，所以在多线程的环境下，可以被安全使用。
 
-#### 2. hash 值不需要重复计算
-一个 String 被创建后，那么它的 hash 值只需要计算一次；
-比如使用 String 做为 HashMap 中的 key ，那么不需要重复计算 hash 值。
+**2. hash 值不需要重复计算**
 
-#### 3. String Pool
+一个 String 被创建后，那么它的 hash 值只需要计算一次；比如使用 String 做为 HashMap 中的 key ，那么不需要重复计算 hash 值。
+
+**3. String Pool：**
+
 一个 String 被创建后，被可以放入 String Pool 中，就可以被其他地方所引用；因为 String 是不可变的，所以才能实现 String Pool 。
 
 ### String, StringBuffer, StringBuilder
 
-#### 1. 不可变性
-String 不可变
-StringBuffer 和 StringBuilder 可变
+**1. 不可变性**
+- String 不可变
+- StringBuffer 和 StringBuilder 可变
 
-#### 2. 线程安全
-String 不可变，因此是线程安全的
-StringBuilder 不是线程安全的
-StringBuffer 是线程安全的，内部使用 synchronized 进行同步
+**2. 线程安全**
+- String 不可变，因此是线程安全的
+- StringBuilder 不是线程安全的
+- StringBuffer 是线程安全的，内部使用 synchronized 进行同步
 
 
 # 三、关键字
