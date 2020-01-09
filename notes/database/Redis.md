@@ -29,7 +29,7 @@ Redis 的数据架构，可以参考下图：
 
 Redis中的所有 value 都是以 Object 的形式存在的，其通用结构如下： 
 
-```
+```Java
 typedef struct redisObject {
     unsigned [type] 4;
     unsigned [encoding] 4;
@@ -166,19 +166,12 @@ Set 相对于 List 来说，Set 是可以自动排重的；它的编码可以是
 **总结来说：**
 
 1.  可以把跳跃表看成多个有序链表（最底层的数据链表+多层索引链表）；
-
 2.  查找的过程中，从最长层开始查找，找到对应的区间再到下一层查找 ；
-
 3.  每个节点都有两个指针，分别指向右边和下边；
-
 4.  插入新节点时，随机判断该节点是否要插入索引，最高插入几级索引；
-
 5.  插入 n 级索引的时候，同时也要插入 1~(n-1) 级索引；
-
 6.  跳跃表和红黑树等平衡树相比，更容易实现，并且不需要维护平衡性；
-
 7.  Redis 中的 ZSet 的一种实现方式是 skipList 与 hashTable 的结合；
-
 8.  Google 的 LevelDB 、Facebook 的 RocksDB ，它们都是使用了跳跃表这种数据结构。
 
 
@@ -275,7 +268,7 @@ Redis 大部分的使用场景，都是根据 key ，先在 Redis 中查询，�
 
 对布隆过滤器感兴趣的同学，可以试一试 Google 出品的 Guava 工具库，其中就有开箱即用的布隆过滤器：BloomFilter；
 
-```
+```Java
 public class BloomFilterTest {
 	public static void main(String[] args){
 		int size = 1000000;

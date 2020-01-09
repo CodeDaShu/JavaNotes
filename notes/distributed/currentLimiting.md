@@ -20,7 +20,7 @@
 
 ![计数器法](https://github.com/CodeDaShu/JavaNotes/blob/master/img/algorithm/count.jpg)
 
-```
+```Java
 public class CounterTest {
    public static void main(String[] args) {
        long timeStamp = System.currentTimeMillis();
@@ -76,7 +76,8 @@ public class CounterTest {
 
 
 再安利一下 Google 开源的 guava 包，使用 **RateLimiter** 我们可以很轻松的创建一个令牌桶算法的限流器。
-```
+
+```Java
 import java.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;

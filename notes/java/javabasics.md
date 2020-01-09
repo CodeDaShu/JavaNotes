@@ -43,7 +43,8 @@ Java 中一共有 8 种基本数据类型：
 其中 boolean 比较特殊，在 java 规范中给出了 boolean 当做 int 处理（4 byte），boolean 数组用 byte 数组实现（1 byte）的定义，具体还要看虚拟机实现是否按照规范实现。
 
 装箱与拆箱：基本类型与其对应的包装类型之间自动进行转换。
-```
+
+```Java
 Integer x = 1; // 装箱：基本类型转包装类型，1 是 int 类型，调用了 Integer.valueOf(1)
 int y = x;   // 拆箱：包装类型转基本类型，调用了 x.intValue()
 ```
@@ -57,7 +58,7 @@ int y = x;   // 拆箱：包装类型转基本类型，调用了 x.intValue()
 ### 强制数据转换
 由高字节向低字节转换，存在精度损失的风险，需要在代码中强制转换。
 
-```
+```Java
 int n = (int)56.56
 ```
 ### 类型提升
@@ -68,7 +69,7 @@ int n = (int)56.56
 - 有一个操作数是float型，计算结果是float型；
 - 有一个操作数是double型，计算结果是double型。
 
-```
+```Java
 char ch = 'a';
 int n = 10 ;
 n = ch + n ; //107；转成了 int
@@ -79,7 +80,8 @@ l = l + n ;  //100000107；转成了 long
 
 ### 隐式类型转换
 让我们看看这几行代码：
-```
+
+```Java
 char ch = 'a';
 ch = ch + 1 ;
 ch ++ ;
@@ -91,7 +93,8 @@ ch ++ ;
 
 关于 Java 字符串 String 有一道很基础的面试题，相信很多人都遇到过，就是 String s = "a" 和 String s = new String("a") 的区别是什么？相信大家都能回答上来。
 那么你知道这三者有什么区别么？
-```
+
+```Java
 Integer i = new Integer(1) ;
 Integer i = Integer.valueOf(1) ;
 Integer i = 1 ;
@@ -104,7 +107,7 @@ Integer i = 1 ;
 ### 缓存池的概念
 为了提高性能，Java 在 1.5 以后针对八种基本类型的包装类，提供了和 String 类一样的缓存池机制；让我们看一下 Integer.valueOf(int i) 的源码，就很容易理解了：
 
-```
+```Java
 public final class Integer extends Number implements Comparable<Integer> {
   public static Integer valueOf(int i) {
         if (i >= IntegerCache.low && i <= IntegerCache.high)
@@ -119,7 +122,8 @@ public final class Integer extends Number implements Comparable<Integer> {
 - 在 jdk 1.8 中，在启动 JVM 的时候，可以通过配置来指定这个缓存池的大小。
 
 ### Integer i = 1 与 Integer.valueOf(1)
-```
+
+```Java
 Integer i = 1 ;
 ```
 
@@ -140,7 +144,8 @@ String 被声明为 final，是不可变的，它也不可被继承。
 ### 通过源码了解 String 的不可变性
 
 在 Java 8 中，String 是使用 char 数组实现的。
-```
+
+```Java
 public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
    /** The value is used for character storage. */
    private final char value[];
@@ -149,8 +154,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
    private int hash; // Default to 0
 }
 ```
+
 到了 Java 9 ，String 类的实现改用 byte 数组实现，同时使用 coder 来标识使用了哪种编码。
-```
+
+```Java
 public final class String
    implements java.io.Serializable, Comparable<String>, CharSequence {
           /** The value is used for 	character storage. */
@@ -159,6 +166,7 @@ public final class String
           private final byte coder;
 }
 ```
+
 我们可以看到，value 数组被声明为 final，并且 String 内部也没有改变 value 数组的方法，因此 String 是不可变的。
 
 ### 不可变的优势
@@ -230,14 +238,14 @@ Java 严格来说也是编译型语言，但又介于编译型和解释型之间
 
 在 Java 中，要使用一个类中的某个方法，“正向”都是这样的：
 
-```
+```Java
 ArrayList list = new ArrayList(); //实例化
 list.add("reflection");  //执行方法
 ```
 
 那么反向（反射）要如何实现？
 
-```
+```Java
 Class clz = Class.forName("java.util.ArrayList");
 Method method_add = clz.getMethod("add",Object.class);
 Constructor constructor = clz.getConstructor();
@@ -258,7 +266,7 @@ System.out.println(method_get.invoke(object, 0));
 
 比如有这么一个功能：“调用阿里云的人脸识别 API ”；这还不简单，参考对方的 API 文档，很快就能实现。
 
-```
+```Java
 faceRecognition(Object faceImg){
   //调用阿里云的人脸识别 API
 }
@@ -266,7 +274,7 @@ faceRecognition(Object faceImg){
 
 上线一个月后，领导说：“咱公司开始和腾讯云合作了，人脸识别的接口改一下吧”。
 
-```
+```Java
 faceRecognition(Object faceImg){
   //调用腾讯云的人脸识别 API
 }
@@ -276,7 +284,7 @@ faceRecognition(Object faceImg){
 
 当然有聪明的程序员会想到设置一个开关配置，让开关决定走哪段代码逻辑，如果领导哪天想变成亚马逊云的服务，继续写 if-else 就好了：
 
-```
+```Java
 faceRecognition(Object faceImg){
   if("AL".equals(configStr)){
     //调用阿里云的人脸识别 API
@@ -292,7 +300,7 @@ faceRecognition(Object faceImg){
 
 1. 定义一个接口：
 
-```
+```Java
 interface FaceRecognitionInterface(){
   faceRecognition(Object faceImg) ;
 }
@@ -300,7 +308,7 @@ interface FaceRecognitionInterface(){
 
 2. 多个实现类：
 
-```
+```Java
 class ALFaceRecognition implements FaceRecognitionInterface{
   //调用阿里云的人脸识别 API 的实现
 }
@@ -312,7 +320,7 @@ class TXFaceRecognition implements FaceRecognitionInterface{
 
 3. 在调用人脸识别功能的代码中：
 
-```
+```Java
 String configStr = "读取配置，走阿里云还是腾讯云";
 FaceRecognitionInterface faceRe =  Class.forName(configStr).newInstance();
 faceRe.faceRecognition(faceImg);
@@ -322,7 +330,7 @@ faceRe.faceRecognition(faceImg);
 
 回忆一下 JDBC 的使用，比如创建一个连接：
 
-```
+```Java
 public Connection getConnection() throws Exception{
   Connection conn = null;
   //初始化驱动类
