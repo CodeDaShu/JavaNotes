@@ -8,6 +8,9 @@
 - [三、关键字](#三关键字)
   - [static](#static)
   - [final](#final)
+    - [修饰类](#修饰类)
+    - [修饰方法](#修饰方法)
+    - [修饰变量](#修饰变量)
 - [四、继承](#四继承)
 - [五、异常](#五异常)    
   - [异常的分类](#异常的分类)
@@ -30,7 +33,6 @@
   - [类型通配符](#类型通配符)
 - [十、序列化](#十序列化)
 <!-- TOC -->
-
 
 # 一、基本数据类型
 
@@ -199,6 +201,58 @@ StringBuffer 是线程安全的，内部使用 synchronized 进行同步
 
 ## final
 
+## final
+
+### 修饰类
+
+当 final 修饰一个类的时候，这个类不能被继承，并且类中所有的属性和方法默认是 final 的。
+
+### 修饰方法
+
+当 final 修饰一个方法的时候，这个方法不能被重写；private 私有方法隐式地被认为是 final 的。
+
+使用 final 修饰的方法，执行效率可能会稍微高一些：
+
+当我们在 A 方法中调用 B 方法时， JVM 会先保存 A 方法当前的数据和执行地址，然后跳到 B 方法所在的内存地址执行，执行完后再返回 A 方法原来的位置；如果 B 方法被 final 修饰，那么 JVM 就可能会进行内联优化。
+
+比如：
+
+```Java
+public int addition(int x, int y) {
+ return x + y;
+}
+
+addition.(1, 2) + addition.(3, 4) ;
+```
+
+就可以被优化成
+
+```Java
+1 + 2 + 3 + 4 ;
+```
+
+对了，上文中说 [ 那么 JVM 就可能会进行内联优化 ] ，为什么是 **“可能”**？因为我们只能告诉 JVM 这里可以做内联优化，但是最终 JVM 还是要自己决定是否做内联优化。
+
+
+### 修饰变量
+
+如果变量被 final 修饰，它就成了常量；
+
+final 修饰基本类型变量的之后，赋值之后无法改变：
+
+```Java
+final int i = 1 ;
+i = 2 ; // 编译报错：The final local variable i cannot be assigned.
+```
+
+final 修饰引用类型，可以使其在初始化之后，不能再指向其他对象，但是它指向的内容是可以改变的：
+
+```Java
+final User user1 = new User("Suku","M","30");
+User user2 = new User("Alina","F","20");
+user1 = user2; //报错：The final local variable user1 cannot be assigned.
+user1.setGender("F");  //可以修改
+```
 
 # 四、继承
 
