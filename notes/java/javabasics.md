@@ -29,6 +29,9 @@
   - [泛型方法](#泛型方法)
   - [类型通配符](#类型通配符)
 - [十、序列化](#十序列化)
+  - [Java序列化的概念及作用](#Java序列化的概念及作用)
+  - [序列化实现的方式](#序列化实现的方式)
+  - [序列化版本](#序列化版本)
 <!-- TOC -->
 
 # 一、基本数据类型
@@ -197,8 +200,6 @@ public final class String
 # 三、关键字
 
 ## static
-
-## final
 
 ## final
 
@@ -459,3 +460,136 @@ java.lang.reflect 类库提供了对反射的支持：
 
 
 # 十、序列化
+
+# Java 序列化
+
+## Java序列化的概念及作用
+
+Java 在内存中创建可以复用的对象，这些对象的生命周期不会比 JVM 的生命周期更长，如果有一些对象需要在 JVM 停止后保存（硬盘），并在 JVM 启动后继续使用，或者需要在两个 JVM 之间传输这些对象（网络传输），但是只有二级制字节序列才能保存到硬盘或者在网络上传输，所以Java 的序列化和反序列化实际上就是对象和字节序列两种形态之间的转化。
+
+- Java 序列化：把 Java 对象转换成字节序列；
+- Java 反序列化：把字节序列转换成 Java 对象。
+
+作用：可以让 Java 对象脱离 JVM 的运行而独立存在，这些字节序列可以保存在硬盘上，或通过网络传输。
+
+注意：上述所有序列化的地方，我都写的是 Java 序列化，实际上现在很多框架已经比较少使用 Java 序列化对象进行网络通信了，大部分都使用某种协议驱动；比如 SOAP 协议就是将 XML 序列化成流。下文中没有特殊提示的地方，序列化都指的是 Java 序列化。
+
+## 序列化实现的方式
+
+一个对象想要被序列化，那么它对应的类要实现 Serializable 接口或它的子接口。
+
+### 1. 实现 Serializable 接口
+
+```Java
+public class User implements Serializable {
+ private String userName ;
+
+ private String gender ;
+
+ private String age ;
+
+ public User(String userName, String gender, String age) {
+  super();
+  System.out.println("User Constructor");
+
+  this.userName = userName;
+  this.gender = gender;
+  this.age = age;
+ }
+
+ @Override
+ public String toString() {
+  return "User [userName=" + userName + ", gender=" + gender + ", age=" + age + "]";
+ }
+}
+```
+
+```Java
+public class SerializableTest {
+ public static void main(String[] args) {
+  try{
+   ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\object.txt"));
+   //将对象序列化到文件
+
+   User user = new User("Suku","M","30");
+   oos.writeObject(user);
+
+   //从文件反序列化成对象
+   ObjectInputStream ois = new ObjectInputStream(new FileInputStream("D:\\object.txt"));
+   User user_in = (User) ois.readObject();
+   System.out.println(user_in);
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+ }
+}
+```
+
+运行结果：
+
+```Java
+User Constructor
+User [userName=Suku, gender=M, age=30]
+```
+
+我们可以看到 User 的构造方法只在 new 的时候调用了一次，反序列化的时候并不需要调用构造方法；
+如果一个可序列化的类，它的成员变量包含了不可序列化的类型，在序列化的过程中会报错：java.io.NotSerializableException ；
+序列化并不能保存静态变量；
+如果有不想序列化的字段，可以使用 transient 进行修饰；被 transient 修饰的字段，都会变成默认值（引用类型是 null，基本类型是 0 或 false）；
+也可以不使用 transient 修饰符，通过重写 writeObject 和 readObject 方法，选择哪些属性需要序列化，哪些不需要序列化；
+
+```Java
+public class UserWriteRead implements Serializable {
+ //省略 ...
+
+ private void writeObject(ObjectOutputStream out) throws IOException {
+  //将 userName 和 gender 写入二进制流
+  out.writeObject(this.userName);
+  out.writeObject(this.gender);
+ }
+
+ private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+  //从二进制流中反写  userName 和 gender
+  this.userName = in.readObject().toString();
+  this.gender = in.readObject().toString();
+ }
+}
+```
+
+### 2. 实现 Externalizable 接口
+
+Externalizable 是 Serializable 接口的子类，通过实现的 writeExternal 和readExternal 方法，可以自己定义实现序列化和反序列化的方式；这里要注意：必须提供 public 的无参数的构造方法。
+
+```Java
+public class UserExter implements Externalizable {
+ //省略 ...
+
+ public UserExter() {} //必须有
+
+ @Override
+ public void writeExternal(ObjectOutput out) throws IOException {
+  //将 userName 和 gender 写入二进制流
+  out.writeObject(this.userName);
+  out.writeObject(this.gender);
+ }
+
+ @Override
+ public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+  //从二进制流中反写  userName 和 gender
+  this.userName = in.readObject().toString();
+  this.gender = in.readObject().toString();
+ }
+}
+```
+
+## 序列化版本
+
+上述例子中，User user = new User("Suku","M","30") 被序列化之后保存到了文件中，如果在反序列化之前，User 中的内容已经发生了变化，那么反序列化还能成功么？或者说你还希望反序列化成功么？
+
+- 如果新版本兼容老版本，比如增加了一个身份证号的属性，其余属性没有变化，那么反序列化是可以成功的，大不了身份证号为 null 嘛，至少不会报错；
+- 如果新老版本不兼容，比如 userName 修改成了 name，那么反序列化之后对象就变成了 new User(null,"M","30") ，虽然程序并不会报错，但是却是一个我们不希望看到的结果；
+
+所以随着序列化类的升级，我们可以使用 serialVersionUID 来保证升级前后的兼容性：
+- 如果希望升级前后保持兼容，那么保持 serialVersionUID 不改变；
+- 如果希望升级前后版本不兼容，那么不同版本中要设置不同的 serialVersionUID 。
+- 如果没有显式地指定 serialVersionUID ，系统会自动生成一个，而当类名、类修饰符、属性、构造器等任何一个有改变，serialVersionUID 都会变化；但是不指定 serialVersionUID 的话可能会有一些隐患，因为不同的 JVM 对于 serialVersionUID 的计算规则可能是不一样的。
