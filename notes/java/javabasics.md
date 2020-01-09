@@ -531,9 +531,13 @@ User [userName=Suku, gender=M, age=30]
 ```
 
 我们可以看到 User 的构造方法只在 new 的时候调用了一次，反序列化的时候并不需要调用构造方法；
+
 如果一个可序列化的类，它的成员变量包含了不可序列化的类型，在序列化的过程中会报错：java.io.NotSerializableException ；
+
 序列化并不能保存静态变量；
+
 如果有不想序列化的字段，可以使用 transient 进行修饰；被 transient 修饰的字段，都会变成默认值（引用类型是 null，基本类型是 0 或 false）；
+
 也可以不使用 transient 修饰符，通过重写 writeObject 和 readObject 方法，选择哪些属性需要序列化，哪些不需要序列化；
 
 ```Java
