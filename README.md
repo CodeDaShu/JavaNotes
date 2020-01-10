@@ -68,6 +68,7 @@
 - 程序人生
     - [工作三年还是只会增删改查，Java 程序员如何进阶？](/notes/chat/codelife/work3years.md)
     - [2019：三十五岁的程序员大叔，工作还在，头发还在](/notes/chat/codelife/2019summary.md)
+    - [高中毕业就想转行当 Coder，程序员的学历真的不重要么？](/notes/chat/codelife/education.md)
 - 提升效率少加班
     - [如何让你的代码跑得更快？尽量让你的代码少干点儿活儿](/notes/chat/efficiency/coderunfast.md)
     - [为什么越来越多的系统在做服务化？](/notes/chat/efficiency/systemService.md)
