@@ -319,3 +319,113 @@ public class BloomFilterTest {
 
 
 # 八、缓存击穿
+
+缓存击穿和缓存雪崩的区别在于：雪崩针对很多 key，而击穿只针对于某一个热点 key。
+
+设置缓存永不过期，这个方法虽然很暴力，但是确实能解决大部分的问题，当然，大部分场景也不太适用；
+
+设置随机过期时间，这个方案对于缓存击穿来说就不太适用了，因为击穿只针对一个热点 key，只要它一失效，大量的访问就会击垮数据库；
+
+其余的方案比如使用互斥锁、双缓存机制，也都可以解决缓存击穿的问题，让我们看看这些方案的具体实现。
+
+## 主动刷新缓存
+
+缓存设置成永不过期，在更新或删除 DB 中的数据时，也主动地把缓存中的数据更新或删除掉。
+
+这个方案很容易理解，但是实现起来却很复杂，但凡需要使用缓存的数据，都需要增加双写数据库和缓存的代码，并且双写过程中，还需要保持数据一致性。
+
+## 检查更新
+
+缓存依然保持设置过期时间，每次 get 缓存的时候，都和数据的过期时间和当前时间进行一下对比，当间隔时间小于一个阈值的时候，主动更新缓存。
+
+比如（缓存过期时间 - 当前系统时间）小于 5 分钟，那么就刷新一次缓存，并且重置缓存过期时间；
+
+不过这个方法也有个致命的问题：如果一个数据，恰好在缓存失效前五分钟，一次访问都没有，那么就不会触发检查更新，当缓存失效后有大量请求访问，那么也会造成缓存击穿。
+
+## 使用锁
+
+在缓存失效后，通过互斥锁或者队列，控制读数据库和写缓存的线程数量。
+
+第一种方法：整个方法是 synchronized 的，这样做虽然可以防止大量请求落到 DB 上，但是就算是缓存没有失效，需要从 DB 中查询数据也需要排队，无疑是降低了系统的吞吐量。
+
+```Java
+public synchronized String getCacheData() {
+      String cacheData = "";
+      //读 Redis
+      cacheData = getDataFromRedis();
+      if (cacheData.isEmpty()) {
+          //读数据库
+          cacheData = getDataFromDB();
+          //写 Redis
+          setDataToCache(cacheData);
+      }
+      return cacheData;
+}
+```
+
+第二种方法：当缓存失效时，只对查询数据库的操作进行加锁，这样对于缓存没有失效的情况也非常友好，但是查询操作这里加锁，也只是会阻塞掉住其他调用，第一其他线程要等待，对调用方不友好，第二这些请求被阻塞的请求最终还是会落到 DB 上的。
+
+```Java
+static Object lock = new Object();
+
+public String getCacheData() {
+      String cacheData = "";
+      // 读 Redis
+      cacheData = getDataFromRedis();
+      if (cacheData.isEmpty()) {
+          synchronized (lock) {
+              //读数据库
+           cacheData = getDataFromDB();
+              //写 Redis
+              setDataToCache(cacheData);
+          }
+      }
+      return cacheData;
+ }
+```
+
+第三种方法：使用互斥锁，抢到锁的话读数据库并写入缓存，抢不到锁的话也不阻塞，而是直接去读缓存，如果缓存中依然读不到数据（抢到锁的可能还没有将缓存写入成功），就等一会再试试读缓存。
+
+```Java
+public String getCacheData(){
+   String result = "";
+      //读 Redis
+      result = getDataFromRedis();
+      if (result.isEmpty()) {
+          if (reenLock.tryLock()) {
+              try {
+                  //读数据库
+                  result = getDataFromDB();
+                  //写 Redis
+                  setDataToCache(result);
+              }catch(Exception e){
+               //...
+              }finally {
+                  reenLock.unlock();//释放锁
+              }
+          } else {
+                //注意：这里可以结合下文中的双缓存机制：
+                //抢不到锁的去查询二级缓存
+              //读 Redis
+              result = getDataFromRedis();
+              if (result.isEmpty()) {
+                  try {
+                    Thread.sleep(100);
+                  } catch (InterruptedException e) {
+                  //...
+              }
+                  return getCacheData();
+              }
+          }
+      }
+      return result;
+}
+```
+
+## 双缓存
+
+设置一级缓存和二级缓存，一级缓存过期时间短，二级缓存过期时间长或者不过期，一级缓存失效后访问二级缓存，同时刷新一级缓存和二级缓存。
+
+双缓存的方式，说白了就是不能将一级缓存和二级缓存中数据同时变成失效，当一级缓存失效后，有多个请求访问，彼此之间依然是竞争锁，抢到锁的线程查询数据库并刷新缓存，而其他没有抢到锁的线程，直接访问二级缓存（代码可以参考上文中的互斥锁），如图：
+
+![双缓存机制](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Redis/double-cache.jpg)
