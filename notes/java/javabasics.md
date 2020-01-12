@@ -474,7 +474,23 @@ Java 的类中，不仅可以定义变量和方法，也能定义类，这种定
 
 ## 静态内部类
 
-定义在类内部的静态类，就是静态内部类。 
+定义在类内部的静态类，就是静态内部类；
+
+静态内部类可以访问外部类所有的静态变量和方法，其他类访问静态内部类的时候，需要使用[外部类.静态内部类]的方式；
+
+```Java
+public class Outer {
+	private static int x;
+	private int y;
+
+	public static class Inner{
+		public void print(){
+			System.out.println(x);
+			System.out.println(y); //编译报错
+		}
+	}
+}
+```
 
 ## 成员内部类
 
