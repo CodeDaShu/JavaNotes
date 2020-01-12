@@ -492,11 +492,82 @@ public class Outer {
 }
 ```
 
+TODO：补充示例 HashMap 中的  static class Node<K,V> implements Map.Entry<K,V>
+
 ## 成员内部类
+
+定义在类内部的非静态类，就是成员内部类；
+
+成员内部类中不能有静态方法和变量，外部类中的静态和非静态变量方法，内部类都能访问到。
+
+```Java
+public class Outer_2 {
+	private static int x;
+	private int y;
+
+	public class Inner{
+		public void print(){
+			System.out.println(x);
+			System.out.println(y);
+		}
+	}
+}
+```
 
 ## 匿名内部类
 
+没有名字的内部类，就是匿名内部类...这好像是句废话。
+
+因为没有名字，所以内部类只能使用一次；而且匿名内部类还有一个前提：必须继承一个类或实现一个接口。
+
+```Java
+public class Anonymous {
+	interface Person {
+	    public void say();
+	}
+
+	public static void main(String[] args) {
+		Person p = new Person() {
+            public void say() {
+                System.out.println("I say");
+            }
+        };
+
+        p.say();
+	}
+}
+```
+
 ## 局部内部类
+
+定义在方法中的类，就是局部类。
+
+```Java
+public class Outer_3 {
+	private static int x;
+	private int y;
+
+	public void print() {
+		class Inner{
+			public void print(){
+				System.out.println(x);
+				System.out.println(y);
+			}
+		}
+
+		Inner inner = new Inner();
+		inner.print();
+	}
+
+	public static void main(String[] args) {
+		Outer_3 out = new Outer_3();
+
+		out.print();
+	}
+}
+```
+
+TODO：为什么要使用内部类？或者说使用内部类的好处。
 
 # 九、泛型
 
