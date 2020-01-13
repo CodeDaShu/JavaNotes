@@ -21,8 +21,6 @@
 
 # 二、List
 
-## List
-
 List 是有序的集合（元素添加顺序）。
 
 ArrayList
