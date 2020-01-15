@@ -492,8 +492,6 @@ public class Outer {
 }
 ```
 
-TODO：补充示例 HashMap 中的  static class Node<K,V> implements Map.Entry<K,V>
-
 ## 成员内部类
 
 定义在类内部的非静态类，就是成员内部类；
@@ -567,7 +565,54 @@ public class Outer_3 {
 }
 ```
 
-TODO：为什么要使用内部类？或者说使用内部类的好处。
+## 为什么使用内部类：
+
+1. 如果有一个类 A，除了类 B 使用之外不在任何其他地方使用；内部类是一种只在一个地方使用的类进行逻辑分组的方法。
+2. 同上，如果一个类只对另外一个类有用，通过内部类嵌套可以更为精简。
+3. 增加了封装：如果一个类 A 有特殊的访问权限，其中一些方法不希望被别人看到，这时候内部类可以被 private 修饰。
+4. 具有更强的可读性和可维护性。
+
+让我们看几个实际的应用：
+
+1. List 、Set 中的迭代器
+
+```Java
+public class ArrayList<E>{
+
+    public Iterator<E> iterator() {
+        return new Itr();
+    }
+
+   private class Itr implements Iterator<E> {
+ //迭代器的实现
+   }
+}
+```
+
+- 不同的容器的结构是不一样的，那么它们的实现细节肯定也是不一样的，比如 ArrayList 和 LinkedList 的遍历方法肯定不一样，所以不同容器的遍历方法不能抽象成公共方法；
+
+- 如果让使用者自己写代码遍历容器，那么使用者就需要了解容器内部结构，那么对于容器使用者来说是一个很大的挑战；但如果为每个 List 、Set 的实现类，都写一个对应的迭代类，又有些多余；
+
+- 所以 List 、Set 的实现类，都会包含一个迭代器内部类，它们只会被外部类使用，而且内部类对象是以外部类对象存在为前提的，没有 ArrayList 对象，就不会需要做遍历，也就不会有 Iterator 对象；
+
+- 内部类被 private 修饰，屏蔽掉了实现细节，对于外部使用者来说，无疑是更为方便的。
+
+2. 上面这个例子中，内部类对象是以外部类对象的存在为前提的（有外有内，没外没内），所以内部类是非静态的成员内部类，如果内部类的对象可以完全独立存在，只是借外部类的壳用一下，这时候可以使用静态内部类；比如 HashMap 内部的数据结构：
+
+```Java
+public class HashMap<K,V>{
+   static class Node<K,V> implements Map.Entry<K,V> {
+        final int hash;
+        final K key;
+        V value;
+        Node<K,V> next;
+   }
+
+   transient Node<K,V>[] table;
+}
+```
+
+HashMap 内部的数据结构是 Node<K,V> ，这个内部类属于外部类本身，但是不属于外部类的任何对象。
 
 # 九、泛型
 
