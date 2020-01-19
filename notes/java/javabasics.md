@@ -228,11 +228,36 @@ public static final int n = 1;
 
 ### 静态内部类
 
+[匿名内部类](#匿名内部类)
 
 ### 初始化顺序
 
+- 父类（静态变量/代码块）
+- 子类（静态变量/代码块）
+- 父类（实例变量/代码块）
+- 父类（构造方法）
+- 子类（实例变量/代码块）
+- 子类（构造方法）
+
+静态变量和静态代码块的初始化顺序，由它们在代码中的顺序决定。
 
 ### 静态导包
+
+通过静态导包，在使用静态变量和方法的时候，不需要在带 [ClassNam.]，可以简化代码。
+
+```Java
+import static com.dashu.javanotes.sta.Contants.*;
+
+public class StaticImport {
+	public void say() {
+		System.out.println(Contants.MAN);
+	}
+
+	public void speak() {
+		System.out.println(MAN);//静态导包
+	}
+}
+```
 
 ## final
 
@@ -649,46 +674,41 @@ Java 在内存中创建可以复用的对象，这些对象的生命周期不会
 
 ```Java
 public class User implements Serializable {
- private String userName ;
+   private String userName ;
+   private String gender ;
+   private String age ;
 
- private String gender ;
+   public User(String userName, String gender, String age) {
+      super();
+      System.out.println("User Constructor");
 
- private String age ;
+      this.userName = userName;
+      this.gender = gender;
+      this.age = age;
+   }
 
- public User(String userName, String gender, String age) {
-  super();
-  System.out.println("User Constructor");
-
-  this.userName = userName;
-  this.gender = gender;
-  this.age = age;
- }
-
- @Override
- public String toString() {
-  return "User [userName=" + userName + ", gender=" + gender + ", age=" + age + "]";
- }
+   //省略 toString、set、get 方法
 }
 ```
 
 ```Java
 public class SerializableTest {
- public static void main(String[] args) {
-  try{
-   ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\object.txt"));
-   //将对象序列化到文件
+   public static void main(String[] args) {
+      try{
+       ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\object.txt"));
+       //将对象序列化到文件
 
-   User user = new User("Suku","M","30");
-   oos.writeObject(user);
+       User user = new User("Suku","M","30");
+       oos.writeObject(user);
 
-   //从文件反序列化成对象
-   ObjectInputStream ois = new ObjectInputStream(new FileInputStream("D:\\object.txt"));
-   User user_in = (User) ois.readObject();
-   System.out.println(user_in);
-  } catch (Exception e) {
-   e.printStackTrace();
-  }
- }
+       //从文件反序列化成对象
+       ObjectInputStream ois = new ObjectInputStream(new FileInputStream("D:\\object.txt"));
+       User user_in = (User) ois.readObject();
+       System.out.println(user_in);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+   }
 }
 ```
 
@@ -711,19 +731,19 @@ User [userName=Suku, gender=M, age=30]
 
 ```Java
 public class UserWriteRead implements Serializable {
- //省略 ...
+   //省略 ...
 
- private void writeObject(ObjectOutputStream out) throws IOException {
-  //将 userName 和 gender 写入二进制流
-  out.writeObject(this.userName);
-  out.writeObject(this.gender);
- }
+   private void writeObject(ObjectOutputStream out) throws IOException {
+      //将 userName 和 gender 写入二进制流
+      out.writeObject(this.userName);
+      out.writeObject(this.gender);
+   }
 
- private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-  //从二进制流中反写  userName 和 gender
-  this.userName = in.readObject().toString();
-  this.gender = in.readObject().toString();
- }
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+      //从二进制流中反写  userName 和 gender
+      this.userName = in.readObject().toString();
+      this.gender = in.readObject().toString();
+   }
 }
 ```
 
