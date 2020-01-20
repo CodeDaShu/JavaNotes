@@ -323,7 +323,7 @@ Java 的异常
 
 如果 Java 方法不能按照正常的流程执行，那么可以通过另外一种途径退出：抛出一个封装了错误信息的对象，这个就是 Java 的异常；当发生异常时，后面的代码无法继续执行，而是由异常处理器继续执行。
 
-![异常](https://github.com/CodeDaShu/JavaNotes/blob/master/img/java/exception.jpg)
+![异常](https://github.com/CodeDaShu/JavaNotes/blob/master/img/Java/exception.jpg)
 
 ## 异常的分类
 
