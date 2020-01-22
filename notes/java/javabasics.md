@@ -17,7 +17,7 @@
   - [注解的概念及作用](#注解的概念及作用)
   - [元注解](#元注解)
   - [内置注解](#内置注解)
-  - [注解处理器](#注解处理器)
+  - [注解的使用场景](#注解的使用场景)
 - [八、内部类](#八内部类)
   - [静态内部类](#静态内部类)
   - [成员内部类](#成员内部类)
@@ -318,9 +318,6 @@ user1.setGender("F");  //可以修改
 
 # 五、异常
 
-Java 的异常
-
-如何优雅的处理 Java 异常，可以参考这些建议
 
 如果 Java 方法不能按照正常的流程执行，那么可以通过另外一种途径退出：抛出一个封装了错误信息的对象，这个就是 Java 的异常；当发生异常时，后面的代码无法继续执行，而是由异常处理器继续执行。
 
@@ -563,8 +560,63 @@ Annotation（注解）：先看看官方给出的概念，注解是 Java 提供�
 
 ## 内置注解
 
-## 注解处理器
+Java 中内置了三种注解：
 
+- @Override：检查该方法是否是重载方法；如果父类或实现的接口中，如果没有该方法，编译会报错。
+- @Deprecated：已经过时的方法；如果使用该方法，会有警告提醒。
+- @SuppressWarnings：忽略警告；比如使用了一个过时的方法会有警告提醒，可以为调用的方法增加 @SuppressWarnings 注解，这样编译器不在产生警告。
+
+JDK 7之后，又增加了三种：
+
+- @SafeVarargs：是一个参数安全类型注解，作用是告诉开发人员，参数可能会存在不安全的操作，要多注意一些；它会产生一个 unchecked 的警告；@SafeVarargs 注解只能用在可变长度参数的方法上，并且这个方法必须是 static 或 final 的，否则会出现编译错误。
+- @FunctionalInterface：表示是只有一个方法的接口，JDK 8 引入。
+- @Repeatable：表示注解的值可以有多个，比如我又帅气又幽默，这时候我同时有了“帅气”和“幽默”两个标签。
+
+
+## 注解的使用场景
+
+注解可以让编译器探测错误和警告；编译阶段可以利用注解生成文档、代码或做其他的处理；在代码运行阶段，一些注解还可以帮助完成代码提取之类的工作。
+
+比如，使用过 Spring 框架的同学应该对 @Autowired 很熟悉了。使用 Spring 开发时，进行配置可以用 xml 配置文件的方式，现在用的更多的就是注解的方式。@Autowired 可以帮助我们注入一个定义好的 Bean。
+
+@Autowired 的核心代码大概是这样的，作用就是 Spring 可以提取到使用 @Autowired 修饰的字段或方法做注入：
+
+```Java
+private InjectionMetadata buildAutowiringMetadata(final Class clazz) {
+ //省略......
+ do {
+  //省略......
+
+  //通过反射，获取这个类的所有字段，并遍历所有字段
+  ReflectionUtils.doWithLocalFields(targetClass, new ReflectionUtils.FieldCallback() {
+   //遍历字段的所有注解
+   @Override
+   public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+    //如果字段使用了 @Autowired
+    AnnotationAttributes ann = findAutowiredAnnotation(field);
+    if (ann != null) {
+     if (Modifier.isStatic(field.getModifiers())) {
+      if (logger.isWarnEnabled()) {
+       logger.warn("Autowired annotation is not supported on static fields: " + field);
+      }
+      return;
+     }
+     boolean required = determineRequiredStatus(ann);
+     //先放到 currElements 中，后面一起集中处理
+     currElements.add(new AutowiredFieldElement(field, required));
+    }
+   }
+  });
+
+  //省略......
+ }
+ while (targetClass != null && targetClass != Object.class);
+
+ return new InjectionMetadata(clazz, elements);
+}
+
+//统一处理，也就是注入的源码我就不贴了
+```
 
 # 八、内部类
 
@@ -682,7 +734,7 @@ public class ArrayList<E>{
     }
 
    private class Itr implements Iterator<E> {
- //迭代器的实现
+        //迭代器的实现
    }
 }
 ```
